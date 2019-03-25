@@ -1,0 +1,49 @@
+{
+	"tool-version": "1.0.0",
+	"name": "dwi2fod",
+	"author": "TONIC",
+	"description": "SYNOPSIS\n     Estimate fibre orientation distributions from diffusion data using\n     spherical deconvolution\n\nUSAGE\n\n     dwi2fod [ options ] algorithm dwi response odf [ response odf ... ]\n\n        algorithm    the algorithm to use for FOD estimation. (options are:\n                     csd,msmt_csd)\n\n        dwi          the input diffusion-weighted image\n\n        response odf  pairs of input tissue response and output ODF images\n\n\nDESCRIPTION\n\n     The spherical harmonic coefficients are stored as follows. First, since\n     the signal attenuation profile is real, it has conjugate symmetry, i.e.\n     Y(l,-m) = Y(l,m)* (where * denotes the complex conjugate). Second, the\n     diffusion profile should be antipodally symmetric (i.e. S(x) = S(-x)),\n     implying that all odd l components should be zero. Therefore, only the\n     even elements are computed.\n     Note that the spherical harmonics equations used here differ slightly from\n     those conventionally used, in that the (-1)^m factor has been omitted.\n     This should be taken into account in all subsequent calculations.\n     Each volume in the output image corresponds to a different spherical\n     harmonic component. Each volume will correspond to the following:\n     volume 0: l = 0, m = 0 ;\n     volume 1: l = 2, m = -2 (imaginary part of m=2 SH) ;\n     volume 2: l = 2, m = -1 (imaginary part of m=1 SH) ;\n     volume 3: l = 2, m = 0 ;\n     volume 4: l = 2, m = 1 (real part of m=1 SH) ;\n     volume 5: l = 2, m = 2 (real part of m=2 SH) ;\n     etc...\n\nDW gradient table import options\n\n  -grad file\n     Provide the diffusion-weighted gradient scheme used in the acquisition in\n     a text file. This should be supplied as a 4xN text file with each line is\n     in the format [ X Y Z b ], where [ X Y Z ] describe the direction of the\n     applied gradient, and b gives the b-value in units of s\/mm^2. If a\n     diffusion gradient scheme is present in the input image header, the data\n     provided with this option will be instead used.\n\n  -fslgrad bvecs bvals\n     Provide the diffusion-weighted gradient scheme used in the acquisition in\n     FSL bvecs\/bvals format files. If a diffusion gradient scheme is present in\n     the input image header, the data provided with this option will be instead\n     used.\n\n  -bvalue_scaling mode\n     specifies whether the b-values should be scaled by the square of the\n     corresponding DW gradient norm, as often required for multi-shell or DSI\n     DW acquisition schemes. The default action can also be set in the MRtrix\n     config file, under the BValueScaling entry. Valid choices are yes\/no,\n     true\/false, 0\/1 (default: true).\n\nDW shell selection options\n\n  -shells b-values\n     specify one or more b-values to use during processing, as a\n     comma-separated list of the desired approximate b-values (b-values are\n     clustered to allow for small deviations). Note that some commands are\n     incompatible with multiple b-values, and will report an error if more than\n     one b-value is provided.\n     WARNING: note that, even though the b=0 volumes are never referred to as\n     shells in the literature, they still have to be explicitly included in the\n     list of b-values as provided to the -shell option! Several algorithms\n     which include the b=0 volumes in their computations may otherwise return\n     an undesired result.\n\nOptions common to more than one algorithm\n\n  -directions file\n     specify the directions over which to apply the non-negativity constraint\n     (by default, the built-in 300 direction set is used). These should be\n     supplied as a text file containing [ az el ] pairs for the directions.\n\n  -lmax order\n     the maximum spherical harmonic order for the output FOD(s).For algorithms\n     with multiple outputs, this should be provided as a comma-separated list\n     of integers, one for each output image; for single-output algorithms, only\n     a single integer should be provided. If omitted, the command will use the\n     highest possible lmax given the diffusion gradient table, up to a maximum\n     of 8.\n\n  -mask image\n     only perform computation within the specified binary brain mask image.\n\nOptions for the Constrained Spherical Deconvolution algorithm\n\n  -filter spec\n     the linear frequency filtering parameters used for the initial linear\n     spherical deconvolution step (default = [ 1 1 1 0 0 ]). These should be\n     supplied as a text file containing the filtering coefficients for each\n     even harmonic order.\n\n  -neg_lambda value\n     the regularisation parameter lambda that controls the strength of the\n     non-negativity constraint (default = 1).\n\n  -norm_lambda value\n     the regularisation parameter lambda that controls the strength of the\n     constraint on the norm of the solution (default = 1).\n\n  -threshold value\n     the threshold below which the amplitude of the FOD is assumed to be zero,\n     expressed as an absolute amplitude (default = 0).\n\n  -niter number\n     the maximum number of iterations to perform for each voxel (default = 50).\n     Use '-niter 0' for a linear unconstrained spherical deconvolution.\n\nStride options\n\n  -strides spec\n     specify the strides of the output data in memory; either as a\n     comma-separated list of (signed) integers, or as a template image from\n     which the strides shall be extracted and used. The actual strides produced\n     will depend on whether the output image format can support it.\n\nStandard options\n\n  -info\n     display information messages.\n\n  -quiet\n     do not display information messages or progress status. Alternatively,\n     this can be achieved by setting the MRTRIX_QUIET environment variable to a\n     non-empty string.\n\n  -debug\n     display debugging messages.\n\n  -force\n     force overwrite of output files. Caution: Using the same file as input and\n     output might cause unexpected behaviour.\n\n  -nthreads number\n     use this number of threads in multi-threaded applications (set to 0 to\n     disable multi-threading).\n\n  -help\n     display this information page and exit.\n\n  -version\n     display version information and exit.\n\nAUTHOR\n     J-Donald Tournier (jdtournier@gmail.com) and Ben Jeurissen\n     (ben.jeurissen@uantwerpen.be)\n\nCOPYRIGHT\n     Copyright (c) 2008-2018 the MRtrix3 contributors.\n     This Source Code Form is subject to the terms of the Mozilla Public\n     License, v. 2.0. If a copy of the MPL was not distributed with this\n     file, you can obtain one at http:\/\/mozilla.org\/MPL\/2.0\/\n     MRtrix3 is distributed in the hope that it will be useful,\n     but WITHOUT ANY WARRANTY; without even the implied warranty\n     of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n     For more details, see http:\/\/www.mrtrix.org\/\n\nREFERENCES\n     * If using csd algorithm:\n     Tournier, J.-D.; Calamante, F. & Connelly, A. Robust determination of the\n     fibre orientation distribution in diffusion MRI: Non-negativity\n     constrained super-resolved spherical deconvolution. NeuroImage, 2007, 35,\n     1459-1472\n\n     * If using msmt_csd algorithm:\n     Jeurissen, B; Tournier, J-D; Dhollander, T; Connelly, A & Sijbers, J.\n     Multi-tissue constrained spherical deconvolution for improved analysis of\n     multi-shell diffusion MRI data NeuroImage, 2014, 103, 411-426\n\n     Tournier, J.-D.; Calamante, F., Gadian, D.G. & Connelly, A. Direct\n     estimation of the fiber orientation density function from\n     diffusion-weighted MRI data using spherical deconvolution.NeuroImage,\n     2004, 23, 1176-1185\n\n\n",
+	"schema-version": "0.5",
+	"container-image": {
+		"image": "bids\/mrtrix3_connectome",
+		"type": "docker"
+	},
+	"inputs": [
+		{
+			"description": "algorithm: {csd\/msmt_csd}",
+			"default-value": "csd",
+			"value-key": "[ALGORITHM]",
+			"type": "String",
+			"optional": false,
+			"id": "algorithm",
+			"name": "algorithm"
+		},
+		{
+			"description": "DWI image: 4D volume",
+			"value-key": "[DWI_IMAGE]",
+			"type": "File",
+			"optional": false,
+			"id": "dwi_image",
+			"name": "DWI image"
+		},
+		{
+			"description": "response function: text file generated by dwi2response",
+			"value-key": "[RESPONSE_FUNCTION]",
+			"type": "File",
+			"optional": false,
+			"id": "response_function",
+			"name": "response function"
+		}
+	],
+	"output-files": [
+		{
+			"description": "ODF: Orientation Dispersion Function",
+			"value-key": "[ODF]",
+			"path-template": ".\/",
+			"optional": false,
+			"id": "odf",
+			"name": "ODF"
+		}
+	],
+	"command-line": "dwi2fod [ALGORITHM] [DWI_IMAGE] [RESPONSE_FUNCTION] [ODF]"
+}

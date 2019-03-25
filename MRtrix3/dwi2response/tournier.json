@@ -1,0 +1,40 @@
+{
+	"tool-version": "1.0.0",
+	"name": "tournier",
+	"author": "TONIC",
+	"description": "     dwi2response: using tournier algorithm for single-shell dataset\n\nSYNOPSIS\n\n     Estimate response function(s) for spherical deconvolution\n\nUSAGE\n\n     dwi2response [ options ] algorithm ...\n\n        algorithm    Select the algorithm to be used to complete the script operation;\n                     additional details and options become available once an\n                     algorithm is nominated. Options are: dhollander, fa,\n                     manual, msmt_5tt, tax, tournier\n\nDESCRIPTION\n\n     dwi2response acts as a 'master' script for performing various types of\n     response function estimation; a range of different algorithms are available\n     for completing this task. When using this script, the name of the algorithm\n     to be used must appear as the first argument on the command-line after\n     'dwi2response'. The subsequent compulsory arguments and options available\n     depend on the particular algorithm being invoked.\n\n     Each algorithm available also has its own help page, including necessary\n     references; e.g. to see the help page of the 'fa' algorithm, type\n     'dwi2response fa'.\n\nOptions common to all dwi2response algorithms\n\n  -shells SHELLS\n     The b-value shell(s) to use in response function estimation (single value\n     for single-shell response, comma-separated list for multi-shell response)\n\n  -lmax LMAX\n     The maximum harmonic degree(s) of response function estimation (single\n     value for single-shell response, comma-separated list for multi-shell\n     response)\n\n  -mask MASK\n     Provide an initial mask for response voxel selection\n\n  -voxels VOXELS\n     Output an image showing the final voxel selection(s)\n\n  -grad GRAD\n     Pass the diffusion gradient table in MRtrix format\n\n  -fslgrad bvecs bvals\n     Pass the diffusion gradient table in FSL bvecs\/bvals format\n\nStandard options\n\n  -continue <TempDir> <LastFile>\n     Continue the script from a previous execution; must provide the temporary\n     directory path, and the name of the last successfully-generated file\n\n  -force\n     Force overwrite of output files if pre-existing\n\n  -help\n     Display help information for the script\n\n  -nocleanup\n     Do not delete temporary files during script, or temporary directory at\n     script completion\n\n  -nthreads number\n     Use this number of threads in MRtrix multi-threaded applications (0\n     disables multi-threading)\n\n  -tempdir \/path\/to\/tmp\/\n     Manually specify the path in which to generate the temporary directory\n\n  -quiet\n     Suppress all console output during script execution\n\n  -info\n     Display additional information and progress for every command invoked\n\n  -debug\n     Display additional debugging information over and above the output of -info\n\nAUTHOR\n     Robert E. Smith (robert.smith@florey.edu.au) and Thijs Dhollander\n     (thijs.dhollander@gmail.com)\n\nCOPYRIGHT\n     Copyright (c) 2008-2018 the MRtrix3 contributors.  This Source Code Form is\n     subject to the terms of the Mozilla Public License, v. 2.0. If a copy of\n     the MPL was not distributed with this file, you can obtain one at\n     http:\/\/mozilla.org\/MPL\/2.0\/  MRtrix3 is distributed in the hope that it\n     will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty\n     of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  For more details,\n     see http:\/\/www.mrtrix.org\/\n\n",
+	"schema-version": "0.5",
+	"container-image": {
+		"image": "bids\/mrtrix3_connectome",
+		"type": "docker"
+	},
+	"inputs": [
+		{
+			"description": "DWI image: 4D .mif volume",
+			"value-key": "[DWI_IMAGE]",
+			"type": "File",
+			"optional": false,
+			"id": "dwi_image",
+			"name": "DWI image"
+		},
+		{
+			"description": "Output Directory",
+			"value-key": "[OUTPUT_DIRECTORY]",
+			"type": "String",
+			"optional": false,
+			"id": "output_directory",
+			"name": "Output Directory"
+		}
+	],
+	"output-files": [
+		{
+			"description": "White matter response",
+			"value-key": "[WHITE_MATTER_RESPONSE]",
+			"path-template": "[OUTPUT_DIRECTORY]\\wm_response.txt",
+			"optional": false,
+			"id": "white_matter_response",
+			"name": "White matter response"
+		}
+	],
+	"command-line": "dwi2response tournier [DWI_IMAGE] [WHITE_MATTER_RESPONSE]"
+}

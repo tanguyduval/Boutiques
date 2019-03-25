@@ -1,0 +1,31 @@
+{
+	"tool-version": "1.0.0",
+	"name": "sct_deepseg_sc",
+	"author": "TONIC",
+	"description": "Segment spinal cord automatically\n\n--\nSpinal Cord Toolbox (version: 3.2.4)\nRunning \/home\/sct\/sct_3.2.4\/scripts\/sct_deepseg_sc.py -h\n\nDESCRIPTION\nSpinal Cord Segmentation using convolutional networks.\n\n  Reference: C Gros, B De Leener, et al. Automatic segmentation of the spinal cord and\n    intramedullary multiple sclerosis lesions with convolutional neural networks (201\n    8). arxiv.org\/abs\/1805.06349\n\nUSAGE\nsct_deepseg_sc -i <image_nifti> -c {t1,t2,t2s,dwi}\n\nMANDATORY ARGUMENTS\n -i <image_nifti>             input image.\n -c {t1,t2,t2s,dwi}           type of image contrast.\n\nOPTIONAL ARGUMENTS\n -centerline {svm,cnn}        choice of spinal cord centerline algorithm. Default value = svm\n -brain {0,1}                 indicate if the input image is expected to contain brain sections: 1:\n                              contains brain section, 0: no brain section. To indicate this\n                              parameter could speed the segmentation process. Default value is 1 if\n                              -c is t1 or t2 (likely includes the brain), or 0 otherwise. Note that\n                              this flag is only effective with -ctr cnn\n -kernel {2d,3d}              choice of 2D or 3D kernels for the segmentation. Note that\n                              segmentation with 3D kernels is significantely longer than with 2D\n                              kernels. Default value = 2d\n -ofolder <folder_creation>   output folder.\n -r {0,1}                     remove temporary files. Default value = 1\n -v {0,1}                     1: display on, 0: display off (default) Default value = 1\n -qc <folder_creation>        The path where the quality control generated content will be saved\n -igt <image_nifti>           File name of ground-truth segmentation.\n\nTotal processing time: 0 min 4 s\n\n\n",
+	"schema-version": "0.5",
+	"container-image": {
+		"image": "neuropoly\/sct:sct-3.2.4-official",
+		"type": "docker"
+	},
+	"inputs": [
+		{
+			"description": "Input image",
+			"value-key": "[INPUT_IMAGE]",
+			"type": "File",
+			"optional": false,
+			"id": "input_image",
+			"name": "Input image"
+		},
+		{
+			"description": "Image contrast: {t1,t2,t2s,dwi}",
+			"default-value": "t1",
+			"value-key": "[IMAGE_CONTRAST]",
+			"type": "String",
+			"optional": false,
+			"id": "image_contrast",
+			"name": "Image contrast"
+		}
+	],
+	"command-line": "\/home\/sct\/sct_3.2.4\/bin\/sct_deepseg_sc -i [INPUT_IMAGE] -c [IMAGE_CONTRAST]"
+}
